@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Asset Manager</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    input, button { margin: 5px; padding: 8px; }
+    table { border-collapse: collapse; margin-top: 20px; }
+    td, th { padding: 8px 12px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>Asset Manager</h1>
+
+  <input id="searchInput" placeholder="Enter IP / Host Name / Serial No">
+  <button onclick="searchAsset()">Search</button>
+
+  <div id="assetDisplay" style="display:none;">
+    <h3>Asset Details</h3>
+    <table>
+      <thead>
+        <tr id="tableHeaderRow"></tr>
+      </thead>
+      <tbody>
+        <tr id="tableDataRow"></tr>
+      </tbody>
+    </table>
+  
+    <button onclick="editAsset()">Edit Asset</button>
+    <button onclick="deleteAsset()">Delete Asset</button>
+    <button onclick="showAddForm()">Add New Asset</button>
+  
+    <form id="editForm" style="display:none;"></form>
+    <button id="saveChangesBtn" style="display:none;">Save Changes</button>
+  </div>
+  
+
+  <script src="script.js"></script>
+</body>
+</html>
