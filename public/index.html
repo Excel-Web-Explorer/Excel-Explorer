@@ -3,20 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>Asset Manager</title>
-  <style>
+  <!-- <style>
     body { font-family: Arial; margin: 20px; }
     input, button { margin: 5px; padding: 8px; }
     table { border-collapse: collapse; margin-top: 20px; }
     td, th { padding: 8px 12px; border: 1px solid #ccc; }
-  </style>
+  </style> -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Asset Manager</h1>
+  <header>
+    <img src="images/left.jpg" alt="Left Image">
+    <img src="images/right.jpg" alt="Right Image">
+  </header>
+  <h1>Aditya Birla Asset repository</h1>
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <button onclick="downloadExcel()">⬇ Download Excel Sheet</button>
+    <input id="searchInput" placeholder="Enter IP / Host Name / Serial No">
+    <button onclick="searchAsset()">Search</button>
+    <button onclick="showAddForm()">Add New Asset</button>
+ 
 
-  <input id="searchInput" placeholder="Enter IP / Host Name / Serial No">
-  <button onclick="searchAsset()">Search</button>
-
-  <div id="assetDisplay" style="display:none;">
+  </div>
+  
+  <div id="assetDisplay" style="display: none; overflow-x: auto; opacity: 0;">
     <h3>Asset Details</h3>
     <table>
       <thead>
@@ -27,10 +37,16 @@
       </tbody>
     </table>
   
-    <button onclick="editAsset()">Edit Asset</button>
-    <button onclick="deleteAsset()">Delete Asset</button>
-    <button onclick="showAddForm()">Add New Asset</button>
-  
+    <div class="button-group">
+      <button onclick="editAsset()">Edit Asset</button>
+      <button onclick="deleteAsset()">Delete Asset</button>
+      <button id="exportPdfBtn" style="display: none;" onclick="exportPDF()">Export as PDF</button>
+    </div>
+    
+    
+    
+  </div>
+  <div id="editContainer" style="margin-top: 20px;">
     <form id="editForm" style="display:none;"></form>
     <button id="saveChangesBtn" style="display:none;">Save Changes</button>
   </div>

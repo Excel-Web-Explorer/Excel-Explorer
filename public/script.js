@@ -1,7 +1,7 @@
 let currentAsset = null;
 let originalQuery = null;
 
-console.log("✅ script.js loaded");
+console.log("script.js loaded");
 
 function createInputField(key, value) {
   return `
@@ -34,9 +34,14 @@ async function searchAsset() {
   originalQuery = query;
 
   populateTable(asset);
-  document.getElementById("assetDisplay").style.display = "block";
+  const display = document.getElementById("assetDisplay");
+display.style.display = "block";
+setTimeout(() => display.style.opacity = "1", 50);
+
   document.getElementById("editForm").style.display = "none";
   document.getElementById("saveChangesBtn").style.display = "none";
+  document.getElementById("exportPdfBtn").style.display = "inline-block";
+
 }
 
 function editAsset() {
@@ -51,19 +56,46 @@ function editAsset() {
   saveBtn.onclick = updateAsset;
   saveBtn.style.display = "inline-block";
 }
+async function showAddForm() {
+  try {
+    console.log("showAddForm triggered");
+    const res = await fetch('/api/headers');
+    const headers = await res.json();
+    console.log("📦 Headers received:", headers);
 
-function showAddForm() {
-  const form = document.getElementById("editForm");
-  form.innerHTML = `
-    <label>IP Address</label><br><input name="IP Address"><br><br>
-    <label>Host Name</label><br><input name="Host Name"><br><br>
-    <label>Mc Serial No</label><br><input name="Mc Serial No"><br><br>
-  `;
-  form.style.display = "block";
-  const saveBtn = document.getElementById("saveChangesBtn");
-  saveBtn.onclick = addAsset;
-  saveBtn.style.display = "inline-block";
+    const form = document.getElementById("editForm");
+    form.innerHTML = "";
+
+    headers.forEach(header => {
+      const cleanHeader = String(header).replace(/\\r|\\n/g, '').trim();
+      if (!cleanHeader || cleanHeader.startsWith("__EMPTY")) return; 
+      const label = document.createElement("label");
+      label.textContent = cleanHeader;
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = cleanHeader;
+
+      form.appendChild(label);
+      form.appendChild(document.createElement("br"));
+      form.appendChild(input);
+      form.appendChild(document.createElement("br"));
+      form.appendChild(document.createElement("br"));
+    });
+
+    form.style.display = "block";
+
+    const saveBtn = document.getElementById("saveChangesBtn");
+    saveBtn.onclick = addAsset;
+    saveBtn.style.display = "inline-block";
+
+  } catch (err) {
+    console.error("Error in showAddForm:", err);
+  }
 }
+
+
+
 
 async function updateAsset() {
   const inputs = document.querySelectorAll("#editForm input");
@@ -80,7 +112,7 @@ async function updateAsset() {
 
   if (res.ok) {
     alert("Asset updated!");
-    searchAsset(); // Refresh the table
+    searchAsset(); 
   } else {
     alert("Update failed.");
   }
@@ -98,13 +130,16 @@ async function addAsset() {
   });
 
   if (res.ok) {
-    alert("Asset added!");
+    alert(" Asset added!");
     document.getElementById("editForm").reset();
     document.getElementById("editForm").style.display = "none";
     document.getElementById("saveChangesBtn").style.display = "none";
+  } else if (res.status === 409) {
+    alert(" Asset already exists (duplicate Mc Serial No, Host Name, or IP Address).");
   } else {
-    alert("Add failed.");
+    alert(" Add failed due to server error.");
   }
+  
 }
 
 async function deleteAsset() {
@@ -123,4 +158,13 @@ async function deleteAsset() {
   } else {
     alert("Delete failed.");
   }
+}
+
+function downloadExcel() {
+  window.location.href = "/api/download";
+}
+
+function exportPDF() {
+  if (!originalQuery) return alert("Search for an asset first.");
+  window.open(`/api/export-pdf?query=${encodeURIComponent(originalQuery)}`, "_blank");
 }
